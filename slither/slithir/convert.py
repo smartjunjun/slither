@@ -1092,7 +1092,7 @@ def extract_tmp_call(
         return op
 
     if isinstance(ins.ori, TmpNewArray):
-        n = NewArray(ins.ori.depth, ins.ori.array_type, ins.lvalue)
+        n = NewArray(ins.ori.array_type, ins.lvalue)
         n.set_expression(ins.expression)
         return n
 

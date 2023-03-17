@@ -37,6 +37,8 @@ from slither.slithir.variables import (
     StateIRVariable,
 )
 
+from slither.core.solidity_types import ArrayType
+
 # Directory of currently executing script. Will be used as basis for temporary file names.
 SCRIPT_DIR = pathlib.Path(getsourcefile(lambda: 0)).parent
 
@@ -1077,3 +1079,20 @@ def test_issue_1748():
         operations = f.slithir_operations
         assign_op = operations[0]
         assert isinstance(assign_op, InitArray)
+
+
+def test_issue_1776():
+    source = """
+    contract Contract {
+        function foo() public returns (uint) {
+            uint[] memory arr = new uint[](2);
+            return 0;
+        }
+    }
+    """
+    with slither_from_source(source) as slither:
+        c = slither.get_contract_from_name("Contract")[0]
+        f = c.functions[0]
+        operations = f.slithir_operations
+        assign_op = operations[0]
+        assert isinstance(assign_op.lvalue.type, ArrayType)
